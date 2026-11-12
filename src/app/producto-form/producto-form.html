@@ -1,0 +1,27 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="row g-2 mb-4">
+  <div class="col-md-5">
+    <input type="text" class="form-control" formControlName="nombre" placeholder="Nombre del producto">
+
+    <div *ngIf="hasError('nombre', 'required')" class="text-danger small">
+      El nombre es obligatorio.
+    </div>
+    <div *ngIf="hasError('nombre', 'minlength')" class="text-danger small">
+      Debe tener al menos 3 caracteres.
+    </div>
+    <div *ngIf="hasError('nombre', 'prohibido')" class="text-danger small">
+      El nombre contiene una palabra no permitida.
+    </div>
+  </div>
+
+  <div class="col-md-5">
+    <input type="text" class="form-control" formControlName="descripcion" placeholder="Descripción">
+
+    <div *ngIf="hasError('descripcion', 'required')" class="text-danger small">
+      La descripción es obligatoria.
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-primary w-100">Agregar</button>
+  </div>
+</form>

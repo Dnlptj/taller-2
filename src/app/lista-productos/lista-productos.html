@@ -1,28 +1,18 @@
-<h2 class="mb-4">{{ titulo }}</h2>
+<h2 class="mb-4">Productos</h2>
 
-<form class="row g-2 mb-4" (ngSubmit)="agregarProducto(nombre.value, descripcion.value, precio.value)">
-  <div class="col-md-4">
-    <input #nombre class="form-control" placeholder="Nombre del producto" required>
-  </div>
-  <div class="col-md-4">
-    <input #descripcion class="form-control" placeholder="Descripción">
-  </div>
-  <div class="col-md-2">
-    <input #precio type="number" class="form-control" placeholder="Precio">
-  </div>
-  <div class="col-md-2">
-    <button type="submit" class="btn btn-primary w-100">Agregar</button>
-  </div>
-</form>
+<app-producto-form (productoAgregado)="onProductoAgregado($event)"></app-producto-form>
 
-<ul class="list-group mb-4">
-  <li *ngFor="let p of productos; let i = index" class="list-group-item d-flex justify-content-between">
-    <span>{{ i + 1 }}. {{ p.nombre }} — {{ p.descripcion }}</span>
-    <span class="badge bg-success">$ {{ p.precio }}</span>
+<ul class="list-group">
+  <li *ngFor="let p of productos$ | async"
+      class="list-group-item d-flex justify-content-between align-items-center">
+    <span>
+      <strong>{{ p.nombre }}</strong> — {{ p.descripcion }}
+    </span>
+    <span class="d-flex align-items-center gap-2">
+      <span class="badge bg-secondary">{{ p.votos }} votos</span>
+      <button class="btn btn-sm btn-success" (click)="votar(p.id, true)">+1</button>
+      <button class="btn btn-sm btn-danger" (click)="votar(p.id, false)">-1</button>
+      <button class="btn btn-sm btn-outline-dark" (click)="eliminar(p.id)">Eliminar</button>
+    </span>
   </li>
 </ul>
-
-<div class="row">
-  <app-producto-card *ngFor="let p of productos" [producto]="p"></app-producto-card>
-</div>
-
