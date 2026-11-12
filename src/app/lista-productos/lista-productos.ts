@@ -1,37 +1,38 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Producto } from '../models/producto';
 import { ProductoForm } from '../producto-form/producto-form';
-import {
-  agregarProducto,
-  eliminarProducto,
-  votarPositivo,
-  votarNegativo
-} from '../store/productos.actions';
+import { eliminarProducto, votarPositivo, votarNegativo } from '../store/productos.actions';
 import { seleccionarProductos } from '../store/productos.selectors';
+import { ProductosApiService } from '../core/productos-api.service';
+import { AppDb } from '../db/app.db';
+import { SALUDO } from '../core/tokens';
 
 @Component({
   selector: 'app-lista-productos',
   imports: [CommonModule, ProductoForm],
   templateUrl: './lista-productos.html'
 })
-export class ListaProductos {
-  productos$: Observable<Producto[]>;
+export class ListaProductos implements OnInit {
+  private store = inject(Store);
+  private api = inject(ProductosApiService);
 
-  constructor(private store: Store) {
-    this.productos$ = this.store.select(seleccionarProductos);
+  // Punto 9: Dexie inyectada en el componente
+  db = inject(AppDb);
+
+  // Punto 3: literal inyectado con token propio
+  saludo = inject(SALUDO);
+
+  productos$: Observable<Producto[]> = this.store.select(seleccionarProductos);
+
+  ngOnInit(): void {
+    this.api.cargar();
   }
 
   onProductoAgregado(datos: { nombre: string; descripcion: string }): void {
-    const producto: Producto = {
-      id: Date.now(),
-      nombre: datos.nombre,
-      descripcion: datos.descripcion,
-      votos: 0
-    };
-    this.store.dispatch(agregarProducto({ producto }));
+    this.api.agregar(datos.nombre, datos.descripcion);
   }
 
   eliminar(id: number): void {
